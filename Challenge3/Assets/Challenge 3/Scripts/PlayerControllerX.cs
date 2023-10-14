@@ -8,7 +8,7 @@ public class PlayerControllerX : MonoBehaviour
     public float floatForce;
     private float gravityModifier = 1.5f;
     private Rigidbody playerRb;
-
+    private bool canFloat = true;
     public ParticleSystem explosionParticle;
     public ParticleSystem fireworksParticle;
 
@@ -35,7 +35,7 @@ public class PlayerControllerX : MonoBehaviour
     void Update()
     {
         // While space is pressed and player is low enough, float up
-        if (Input.GetKey(KeyCode.Space)&& isLowEnough && !gameOver)
+        if (Input.GetKey(KeyCode.Space) && isLowEnough && !gameOver && canFloat)
         {
             playerRb.AddForce(Vector3.up * floatForce);
         }
@@ -48,6 +48,17 @@ public class PlayerControllerX : MonoBehaviour
         {
             isLowEnough = true;
         }
+    }
+
+    // Coroutine to add a 1-second delay before floating
+    public IEnumerator FloatWithDelay()
+    {
+        canFloat = false; // Disable floating temporarily
+
+        yield return new WaitForSeconds(1.0f); // Wait for 1 second
+
+        canFloat = true; // Re-enable floating
+        playerRb.AddForce(Vector3.up * floatForce);
     }
 
     private void OnCollisionEnter(Collision other)
